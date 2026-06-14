@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}الرئيسية{% endblock %}
+{% block content %}
+
+<!-- HERO -->
+<section style="text-align:center;padding:4rem 1.5rem 3rem;background:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(16,185,129,.1) 0%,transparent 70%)">
+  <div style="display:inline-flex;align-items:center;gap:.4rem;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:var(--green);font-size:.8rem;padding:.3rem .85rem;border-radius:100px;margin-bottom:1.25rem">
+    &#11088; منصة التوظيف الأولى في الجزائر
+  </div>
+  <h1 style="font-size:clamp(1.8rem,4vw,3rem);font-weight:900;line-height:1.2;margin-bottom:.85rem">
+    اعثر على <span style="color:var(--green)">وظيفتك المثالية</span><br>في الجزائر
+  </h1>
+  <p style="color:var(--t2);font-size:1rem;max-width:520px;margin:0 auto 1.75rem">
+    آلاف الفرص الوظيفية من أبرز شركات الجزائر — مجاناً للباحثين عن عمل
+  </p>
+
+  <!-- SEARCH -->
+  <form action="/jobs" method="get" style="display:flex;max-width:580px;margin:0 auto 2.5rem;background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden">
+    <input name="q" type="text" placeholder="&#128269; ابحث عن وظيفة، شركة، تخصص..."
+      style="flex:1;background:none;border:none;outline:none;color:var(--t1);font-family:inherit;font-size:.95rem;padding:.85rem 1.1rem">
+    <button type="submit" class="btn btn-green" style="border-radius:0;padding:.85rem 1.25rem">بحث</button>
+  </form>
+
+  <!-- STATS -->
+  <div style="display:flex;justify-content:center;gap:3rem;flex-wrap:wrap">
+    <div style="text-align:center">
+      <div style="font-size:1.9rem;font-weight:900;color:var(--green)">{{ total_jobs }}</div>
+      <div style="color:var(--t3);font-size:.8rem">وظيفة متاحة</div>
+    </div>
+    <div style="text-align:center">
+      <div style="font-size:1.9rem;font-weight:900;color:var(--green)">{{ total_cos }}</div>
+      <div style="color:var(--t3);font-size:.8rem">شركة نشطة</div>
+    </div>
+    <div style="text-align:center">
+      <div style="font-size:1.9rem;font-weight:900;color:var(--green)">48</div>
+      <div style="color:var(--t3);font-size:.8rem">ولاية مغطاة</div>
+    </div>
+    <div style="text-align:center">
+      <div style="font-size:1.9rem;font-weight:900;color:var(--green)">{{ total_apps }}</div>
+      <div style="color:var(--t3);font-size:.8rem">طلب مرسل</div>
+    </div>
+  </div>
+</section>
+
+<!-- AD PLACEHOLDER -->
+<div class="container">
+  <div style="background:var(--card);border:1px dashed var(--border);border-radius:8px;padding:1rem;text-align:center;color:var(--t3);font-size:.8rem;height:80px;display:flex;align-items:center;justify-content:center">
+    &#128rectangle; مساحة إعلانية — Google AdSense (728×90)
+  </div>
+</div>
+
+<!-- FEATURED JOBS -->
+{% if featured %}
+<div class="container section">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
+    <div style="font-size:1.2rem;font-weight:700">وظائف مميزة &#11088;</div>
+    <a href="/jobs" class="btn btn-outline btn-sm">عرض الكل &larr;</a>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem">
+    {% for job in featured %}
+    {% include "_job_card.html" %}
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- LATEST JOBS -->
+<div class="container" style="padding-bottom:2.5rem">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
+    <div style="font-size:1.2rem;font-weight:700">أحدث الوظائف</div>
+    <a href="/jobs" class="btn btn-outline btn-sm">الكل &larr;</a>
+  </div>
+  {% if latest %}
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem">
+    {% for job in latest %}
+    {% include "_job_card.html" %}
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="card" style="text-align:center;padding:3rem;color:var(--t3)">
+    لا توجد وظائف بعد — <a href="/register" style="color:var(--green)">سجّل شركتك وانشر أول وظيفة</a>
+  </div>
+  {% endif %}
+</div>
+
+<!-- CATEGORIES -->
+<div class="container" style="padding-bottom:3rem">
+  <div style="font-size:1.2rem;font-weight:700;margin-bottom:1rem">تصفح حسب التخصص</div>
+  <div style="display:flex;gap:.6rem;flex-wrap:wrap">
+    {% for cat in categories %}
+    <a href="/jobs?cat={{ cat }}" class="btn btn-outline btn-sm">{{ cat }}</a>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}

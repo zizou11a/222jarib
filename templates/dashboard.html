@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% block title %}لوحة التحكم{% endblock %}
+{% block content %}
+<div class="dash-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="dash-sidebar">
+    <div style="display:flex;align-items:center;gap:.65rem;margin-bottom:1.1rem;padding-bottom:1.1rem;border-bottom:1px solid var(--border)">
+      <div style="width:38px;height:38px;border-radius:8px;background:rgba(16,185,129,.12);color:var(--green);display:flex;align-items:center;justify-content:center;font-weight:700">
+        {{ company.name[0] }}
+      </div>
+      <div>
+        <div style="font-weight:600;font-size:.88rem">{{ company.name }}</div>
+        <span class="badge badge-green" style="margin-top:.2rem">&#127881; مجاني</span>
+      </div>
+    </div>
+    <nav class="dash-menu">
+      <a href="/dashboard" class="{% if request.path=='/dashboard' %}active{% endif %}">&#128202; نظرة عامة</a>
+      <a href="/dashboard?tab=post" class="{% if request.args.get('tab')=='post' %}active{% endif %}">&#10133; نشر وظيفة</a>
+      <a href="/dashboard/applications">&#128236; الطلبات <span class="badge badge-green" style="margin-right:.3rem">{{ new_apps }}</span></a>
+      <a href="/dashboard/profile">&#127970; ملف الشركة</a>
+      <div class="divider" style="margin:.65rem 0"></div>
+      <a href="/logout">&#128682; تسجيل الخروج</a>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="dash-main">
+
+    {% if request.args.get('tab') == 'post' %}
+    <!-- POST JOB FORM -->
+    <div style="font-size:1.4rem;font-weight:700;margin-bottom:1.25rem">نشر وظيفة جديدة</div>
+    <div class="card">
+      <form action="/dashboard/post-job" method="post">
+        <div class="form-row">
+          <div class="form-group">
+            <label>عنوان الوظيفة *</label>
+            <input type="text" name="title" required placeholder="مطوّر واجهات أمامية">
+          </div>
+          <div class="form-group">
+            <label>التخصص *</label>
+            <select name="category" required>
+              {% for c in categories %}<option>{{ c }}</option>{% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>نوع العقد *</label>
+            <select name="job_type" required>
+              {% for t in job_types %}<option>{{ t }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>الولاية *</label>
+            <select name="wilaya" required>
+              {% for w in wilayas %}<option>{{ w }}</option>{% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>الراتب الأدنى (دج)</label>
+            <input type="number" name="salary_min" placeholder="80000" min="0">
+          </div>
+          <div class="form-group">
+            <label>الراتب الأقصى (دج)</label>
+            <input type="number" name="salary_max" placeholder="150000" min="0">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>وصف الوظيفة *</label>
+          <textarea name="description" required placeholder="اكتب وصفاً شاملاً للمنصب..." style="min-height:130px"></textarea>
+        </div>
+        <div class="form-group">
+          <label>المتطلبات</label>
+          <textarea name="requirements" placeholder="- 3 سنوات خبرة&#10;- إتقان Python&#10;- مهارات تواصل"></textarea>
+        </div>
+        <div class="form-group">
+          <label>المزايا</label>
+          <textarea name="benefits" placeholder="- تأمين صحي&#10;- مكافآت سنوية"></textarea>
+        </div>
+        <button type="submit" class="btn btn-green">&#128228; نشر الوظيفة</button>
+      </form>
+    </div>
+
+    {% else %}
+    <!-- OVERVIEW -->
+    <div style="font-size:1.4rem;font-weight:700;margin-bottom:1.25rem">لوحة التحكم</div>
+
+    <!-- KPIs -->
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-val" style="color:var(--green)">{{ jobs|length }}</div>
+        <div class="kpi-lbl">وظيفة منشورة</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-val" style="color:var(--gold)">{{ total_apps }}</div>
+        <div class="kpi-lbl">إجمالي الطلبات</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-val" style="color:var(--red)">{{ new_apps }}</div>
+        <div class="kpi-lbl">طلبات جديدة</div>
+      </div>
+    </div>
+
+    <!-- QUICK POST BUTTON -->
+    <div style="margin-bottom:1.25rem">
+      <a href="/dashboard?tab=post" class="btn btn-green">&#10133; نشر وظيفة جديدة</a>
+    </div>
+
+    <!-- JOBS TABLE -->
+    <div class="card">
+      <div style="font-weight:700;margin-bottom:1rem">وظائفي ({{ jobs|length }})</div>
+      {% if jobs %}
+      <table>
+        <thead>
+          <tr>
+            <th>الوظيفة</th><th>الولاية</th><th>النوع</th><th>الطلبات</th><th>تاريخ النشر</th><th>الحالة</th><th>إجراء</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for job in jobs %}
+          <tr>
+            <td><a href="/job/{{ job.id }}" style="color:var(--green)">{{ job.title }}</a></td>
+            <td>{{ job.wilaya }}</td>
+            <td><span class="badge badge-blue">{{ job.job_type }}</span></td>
+            <td>{{ job.applications|length }}</td>
+            <td style="color:var(--t3);font-size:.8rem">{{ job.created_at.strftime('%d/%m/%Y') }}</td>
+            <td>
+              {% if job.is_approved %}
+                <span class="badge badge-green">&#10003; نشط</span>
+              {% else %}
+                <span class="badge badge-gold">&#8987; بانتظار الموافقة</span>
+              {% endif %}
+            </td>
+            <td>
+              <form action="/dashboard/delete-job/{{ job.id }}" method="post" style="display:inline"
+                onsubmit="return confirm('هل أنت متأكد من حذف هذه الوظيفة؟')">
+                <button type="submit" class="btn btn-red btn-xs">حذف</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div style="text-align:center;color:var(--t3);padding:2rem">
+        لم تنشر أي وظيفة بعد —
+        <a href="/dashboard?tab=post" style="color:var(--green)">انشر أول وظيفة الآن</a>
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+
+  </main>
+</div>
+{% endblock %}
