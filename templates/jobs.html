@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}الوظائف المتاحة{% endblock %}
+{% block meta_desc %}تصفح {{ jobs|length }} وظيفة متاحة في الجزائر. فلتر حسب الولاية والتخصص ونوع العقد. Offres d'emploi en Algérie.{% endblock %}
+{% block canonical %}/jobs{% endblock %}
+
+{% block content %}
+<div class="container section">
+  <h1 class="page-title">الوظائف المتاحة</h1>
+  <p class="page-sub">{{ jobs|length }} وظيفة متاحة الآن</p>
+
+  <div class="ad-placeholder ad-leaderboard" aria-label="مساحة إعلانية">
+    📢 Google AdSense (728×90)
+  </div>
+
+  <!-- FILTERS -->
+  <form method="get" class="filter-auto" aria-label="تصفية الوظائف" style="display:flex;gap:.65rem;flex-wrap:wrap;margin-bottom:1.5rem">
+    <input name="q" value="{{ q }}" type="search"
+      placeholder="🔍 بحث..."
+      aria-label="البحث عن وظيفة"
+      style="flex:1;min-width:180px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--t1);font-family:inherit;font-size:.85rem;padding:.5rem .85rem;outline:none">
+    <select name="wilaya" aria-label="اختر الولاية" style="background:var(--card);border:1px solid var(--border);color:var(--t1);border-radius:8px;padding:.5rem .85rem;font-family:inherit;font-size:.85rem;outline:none">
+      <option value="">كل الولايات</option>
+      {% for w in wilayas %}
+      <option value="{{ w }}" {% if wilaya==w %}selected{% endif %}>{{ w }}</option>
+      {% endfor %}
+    </select>
+    <select name="cat" aria-label="اختر التخصص" style="background:var(--card);border:1px solid var(--border);color:var(--t1);border-radius:8px;padding:.5rem .85rem;font-family:inherit;font-size:.85rem;outline:none">
+      <option value="">كل التخصصات</option>
+      {% for c in categories %}
+      <option value="{{ c }}" {% if cat==c %}selected{% endif %}>{{ c }}</option>
+      {% endfor %}
+    </select>
+    <select name="type" aria-label="اختر نوع العقد" style="background:var(--card);border:1px solid var(--border);color:var(--t1);border-radius:8px;padding:.5rem .85rem;font-family:inherit;font-size:.85rem;outline:none">
+      <option value="">كل الأنواع</option>
+      {% for t in job_types %}
+      <option value="{{ t }}" {% if jtype==t %}selected{% endif %}>{{ t }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-green">بحث</button>
+    {% if q or wilaya or cat or jtype %}
+    <a href="/jobs" class="btn btn-outline">مسح</a>
+    {% endif %}
+  </form>
+
+  <!-- RESULTS -->
+  {% if jobs %}
+  <div class="jobs-grid" role="list" aria-label="قائمة الوظائف">
+    {% for job in jobs %}
+    <div role="listitem">{% include "_job_card.html" %}</div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon">🔍</div>
+    <h2>لا توجد وظائف مطابقة</h2>
+    <p>جرّب كلمات بحث مختلفة أو <a href="/jobs" style="color:var(--green)">امسح الفلاتر</a></p>
+  </div>
+  {% endif %}
+
+  <div class="ad-placeholder ad-rectangle" aria-label="مساحة إعلانية">
+    📢 Google AdSense (300×250)
+  </div>
+</div>
+{% endblock %}
