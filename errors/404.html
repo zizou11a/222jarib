@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}404 — الصفحة غير موجودة{% endblock %}
+{% block robots %}noindex, nofollow{% endblock %}
+{% block content %}
+<div style="display:flex;align-items:center;justify-content:center;min-height:60vh;text-align:center;padding:2rem">
+  <div>
+    <div style="font-size:5rem;margin-bottom:1rem">🔍</div>
+    <h1 style="font-size:2rem;font-weight:900;margin-bottom:.5rem">404</h1>
+    <h2 style="color:var(--t2);font-size:1.1rem;margin-bottom:1.5rem">الصفحة غير موجودة</h2>
+    <p style="color:var(--t3);margin-bottom:2rem">الصفحة التي تبحث عنها غير موجودة أو تم نقلها.</p>
+    <a href="/" class="btn btn-green" style="margin-left:.5rem">🏠 الرئيسية</a>
+    <a href="/jobs" class="btn btn-outline">🔍 تصفح الوظائف</a>
+  </div>
+</div>
+{% endblock %}
