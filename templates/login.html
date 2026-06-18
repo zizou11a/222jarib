@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}تسجيل الدخول{% endblock %}
+{% block meta_desc %}سجّل دخولك لحسابك على وضيفة DZ — منصة التوظيف الجزائرية.{% endblock %}
+{% block robots %}noindex, follow{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card">
+    <h1 style="font-size:1.4rem;font-weight:700;margin-bottom:.4rem">أهلاً بعودتك 👋</h1>
+    <p style="color:var(--t2);font-size:.9rem;margin-bottom:1.5rem">سجّل دخولك للوصول لحسابك</p>
+
+    <form method="post" novalidate>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="form-group">
+        <label for="email">البريد الإلكتروني</label>
+        <input type="email" id="email" name="email" required
+          autocomplete="email" placeholder="example@mail.com"
+          aria-required="true">
+      </div>
+
+      <div class="form-group">
+        <label for="password">كلمة المرور</label>
+        <input type="password" id="password" name="password" required
+          autocomplete="current-password" placeholder="••••••••"
+          aria-required="true">
+      </div>
+
+      <button type="submit" class="btn btn-green btn-full" style="padding:.75rem;font-size:.95rem;margin-bottom:1rem">
+        تسجيل الدخول
+      </button>
+    </form>
+
+    <div class="divider"></div>
+
+    <!-- Demo accounts -->
+    <details style="margin-bottom:1rem">
+      <summary style="color:var(--t3);font-size:.82rem;cursor:pointer">حسابات تجريبية</summary>
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.85rem;margin-top:.5rem;font-size:.8rem;color:var(--t3)">
+        <div>🛡️ Admin: admin@wadifa.dz / admin2024</div>
+      </div>
+    </details>
+
+    <div style="text-align:center;color:var(--t2);font-size:.9rem">
+      ليس لديك حساب؟ <a href="/register" style="color:var(--green)">سجّل مجاناً</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
