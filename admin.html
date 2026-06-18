@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+{% block title %}لوحة الإدارة{% endblock %}
+{% block content %}
+<div class="dash-layout">
+
+  <aside class="dash-sidebar">
+    <div style="display:flex;align-items:center;gap:.65rem;margin-bottom:1.1rem;padding-bottom:1.1rem;border-bottom:1px solid var(--border)">
+      <div style="width:38px;height:38px;border-radius:8px;background:rgba(239,68,68,.12);color:var(--red);display:flex;align-items:center;justify-content:center;font-size:.9rem">&#128737;</div>
+      <div>
+        <div style="font-weight:600;font-size:.88rem">المشرف العام</div>
+        <span class="badge badge-red">Admin</span>
+      </div>
+    </div>
+    <nav class="dash-menu">
+      <a href="/admin" class="{% if not request.args.get('tab') %}active{% endif %}">&#128202; الإحصائيات</a>
+      <a href="/admin?tab=users" class="{% if request.args.get('tab')=='users' %}active{% endif %}">&#128101; المستخدمون</a>
+      <a href="/admin?tab=jobs" class="{% if request.args.get('tab')=='jobs' %}active{% endif %}">&#128188; إدارة الوظائف</a>
+      <div class="divider" style="margin:.65rem 0"></div>
+      <a href="/logout">&#128682; خروج</a>
+    </nav>
+  </aside>
+
+  <main class="dash-main">
+
+    {% set tab = request.args.get('tab','stats') %}
+
+    {% if tab == 'users' %}
+    <!-- USERS -->
+    <div style="font-size:1.4rem;font-weight:700;margin-bottom:1.25rem">إدارة المستخدمين ({{ all_users|length }})</div>
+    <div class="card">
+      <table>
+        <thead>
+          <tr><th>الاسم</th><th>البريد</th><th>الدور</th><th>الولاية</th><th>التسجيل</th><th>الحالة</th><th>إجراء</th></tr>
+        </thead>
+        <tbody>
+          {% for u in all_users %}
+          <tr>
+            <td style="font-weight:600">{{ u.full_name }}</td>
+            <td style="color:var(--t3);font-size:.82rem">{{ u.email }}</td>
+            <td>
+              {% if u.role=='admin' %}<span class="badge badge-red">Admin</span>
+              {% elif u.role=='company' %}<span class="badge badge-green">شركة</span>
+              {% else %}<span class="badge badge-blue">باحث</span>{% endif %}
+            </td>
+            <td style="font-size:.85rem">{{ u.wilaya or '—' }}</td>
+            <td style="color:var(--t3);font-size:.8rem">{{ u.created_at.strftime('%d/%m/%Y') }}</td>
+            <td>
+              {% if u.is_active %}<span class="badge badge-green">نشط</span>
+              {% else %}<span class="badge badge-red">موقوف</span>{% endif %}
+            </td>
+            <td>
+              {% if u.role != 'admin' %}
+              <form action="/admin/user/{{ u.id }}/toggle" method="post" style="display:inline">
+                <button type="submit" class="btn btn-xs {% if u.is_active %}btn-red{% else %}btn-green{% endif %}">
+                  {% if u.is_active %}إيقاف{% else %}تفعيل{% endif %}
+                </button>
+              </form>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% elif tab == 'jobs' %}
+    <!-- JOBS MODERATION -->
+    <div style="font-size:1.4rem;font-weight:700;margin-bottom:1.25rem">إدارة الوظائف ({{ all_jobs|length }})</div>
+
+    {% if pending_jobs %}
+    <div class="card" style="margin-bottom:1.25rem;border-color:rgba(245,158,11,.3)">
+      <div style="font-weight:700;color:var(--gold);margin-bottom:.85rem">&#8987; بانتظار الموافقة ({{ pending_jobs|length }})</div>
+      <table>
+        <thead><tr><th>الوظيفة</th><th>الشركة</th><th>الولاية</th><th>إجراء</th></tr></thead>
+        <tbody>
+          {% for job in pending_jobs %}
+          <tr>
+            <td>{{ job.title }}</td>
+            <td style="color:var(--green)">{{ job.company.name }}</td>
+            <td>{{ job.wilaya }}</td>
+            <td style="display:flex;gap:.35rem">
+              <form action="/admin/job/{{ job.id }}/approve" method="post" style="display:inline">
+                <button type="submit" class="btn btn-green btn-xs">&#10003; موافقة</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+
+    <div class="card">
+      <div style="font-weight:700;margin-bottom:.85rem">كل الوظائف</div>
+      <table>
+        <thead><tr><th>الوظيفة</th><th>الشركة</th><th>الولاية</th><th>الطلبات</th><th>الحالة</th><th>مميزة</th></tr></thead>
+        <tbody>
+          {% for job in all_jobs %}
+          <tr>
+            <td><a href="/job/{{ job.id }}" style="color:var(--green)">{{ job.title }}</a></td>
+            <td>{{ job.company.name }}</td>
+            <td style="font-size:.85rem">{{ job.wilaya }}</td>
+            <td>{{ job.applications|length }}</td>
+            <td>
+              {% if job.is_approved %}<span class="badge badge-green">نشط</span>
+              {% else %}<span class="badge badge-gold">معلق</span>{% endif %}
+            </td>
+            <td>
+              <form action="/admin/job/{{ job.id }}/feature" method="post" style="display:inline">
+                <button type="submit" class="btn btn-xs {% if job.is_featured %}btn-gold{% else %}btn-outline{% endif %}">
+                  {% if job.is_featured %}&#11088; مميزة{% else %}تمييز{% endif %}
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% else %}
+    <!-- STATS (default) -->
+    <div style="font-size:1.4rem;font-weight:700;margin-bottom:1.25rem">إحصائيات المنصة</div>
+    <div class="kpi-row">
+      <div class="kpi-card"><div class="kpi-val" style="color:var(--green)">{{ stats.jobs }}</div><div class="kpi-lbl">إجمالي الوظائف</div></div>
+      <div class="kpi-card"><div class="kpi-val" style="color:#60a5fa">{{ stats.users }}</div><div class="kpi-lbl">مستخدم مسجل</div></div>
+      <div class="kpi-card"><div class="kpi-val" style="color:var(--gold)">{{ stats.cos }}</div><div class="kpi-lbl">شركة مسجلة</div></div>
+      <div class="kpi-card"><div class="kpi-val" style="color:#a78bfa">{{ stats.apps }}</div><div class="kpi-lbl">طلب مرسل</div></div>
+    </div>
+
+    <div class="card">
+      <div style="font-weight:700;margin-bottom:.85rem">آخر المستخدمين</div>
+      <table>
+        <thead><tr><th>الاسم</th><th>البريد</th><th>الدور</th><th>تاريخ التسجيل</th></tr></thead>
+        <tbody>
+          {% for u in recent_users %}
+          <tr>
+            <td style="font-weight:600">{{ u.full_name }}</td>
+            <td style="color:var(--t3);font-size:.82rem">{{ u.email }}</td>
+            <td>
+              {% if u.role=='company' %}<span class="badge badge-green">شركة</span>
+              {% else %}<span class="badge badge-blue">باحث</span>{% endif %}
+            </td>
+            <td style="color:var(--t3);font-size:.8rem">{{ u.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+
+  </main>
+</div>
+{% endblock %}

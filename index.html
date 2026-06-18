@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %}الرئيسية{% endblock %}
+{% block meta_desc %}وضيفة DZ — منصة التوظيف الجزائرية الأولى. {{ total_jobs }} وظيفة في 48 ولاية. ابحث عن عملك أو انشر وظيفتك مجاناً. Emploi Algérie.{% endblock %}
+
+{% block schema %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "وضيفة DZ | Wadifa DZ",
+  "url": "{{ config.BASE_URL }}",
+  "description": "منصة التوظيف الجزائرية الأولى",
+  "areaServed": "DZ",
+  "knowsLanguage": ["ar", "fr"]
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<!-- HERO -->
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-eyebrow" aria-label="منصة التوظيف الأولى في الجزائر">
+    ⭐ منصة التوظيف الأولى في الجزائر
+  </div>
+  <h1 id="hero-title">
+    اعثر على <em>وظيفتك المثالية</em><br>في الجزائر
+  </h1>
+  <p>آلاف الفرص الوظيفية من أبرز شركات الجزائر — مجاناً للباحثين عن عمل</p>
+
+  <form action="/jobs" method="get" class="search-form" role="search" aria-label="البحث عن وظيفة">
+    <input name="q" type="search" placeholder="ابحث عن وظيفة، شركة، تخصص..." aria-label="كلمة البحث" autocomplete="off">
+    <button type="submit" aria-label="بحث">🔍 بحث</button>
+  </form>
+
+  <div class="stats-row" aria-label="إحصائيات المنصة">
+    <div class="stat-item">
+      <div class="stat-num" data-count="{{ total_jobs }}">{{ total_jobs }}</div>
+      <div class="stat-lbl">وظيفة متاحة</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" data-count="{{ total_cos }}">{{ total_cos }}</div>
+      <div class="stat-lbl">شركة نشطة</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">48</div>
+      <div class="stat-lbl">ولاية مغطاة</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" data-count="{{ total_apps }}">{{ total_apps }}</div>
+      <div class="stat-lbl">طلب مرسل</div>
+    </div>
+  </div>
+</section>
+
+<!-- AD -->
+<div class="container">
+  <div class="ad-placeholder ad-leaderboard" aria-label="مساحة إعلانية">
+    📢 مساحة إعلانية — Google AdSense (728×90)
+  </div>
+</div>
+
+<!-- FEATURED JOBS -->
+{% if featured %}
+<section class="container section" aria-labelledby="featured-title">
+  <div class="section-head">
+    <h2 class="section-title" id="featured-title">وظائف مميزة ⭐</h2>
+    <a href="/jobs" class="btn btn-outline btn-sm">عرض الكل ←</a>
+  </div>
+  <div class="jobs-grid">
+    {% for job in featured %}
+    {% include "_job_card.html" %}
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<!-- LATEST JOBS -->
+<section class="container" style="padding-bottom:2.5rem" aria-labelledby="latest-title">
+  <div class="section-head">
+    <h2 class="section-title" id="latest-title">أحدث الوظائف</h2>
+    <a href="/jobs" class="btn btn-outline btn-sm">الكل ←</a>
+  </div>
+  {% if latest %}
+  <div class="jobs-grid">
+    {% for job in latest %}
+    {% include "_job_card.html" %}
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon">📋</div>
+    <h3>لا توجد وظائف بعد</h3>
+    <p><a href="/register" style="color:var(--green)">سجّل شركتك وانشر أول وظيفة</a></p>
+  </div>
+  {% endif %}
+</section>
+
+<!-- CATEGORIES -->
+<section class="container" style="padding-bottom:3rem" aria-labelledby="cats-title">
+  <h2 class="section-title" id="cats-title" style="margin-bottom:1rem">تصفح حسب التخصص</h2>
+  <div style="display:flex;gap:.6rem;flex-wrap:wrap">
+    {% for cat in categories %}
+    <a href="/jobs?cat={{ cat|urlencode }}" class="btn btn-outline btn-sm">{{ cat }}</a>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- WILAYAS -->
+<section class="container" style="padding-bottom:3rem" aria-labelledby="wilayas-title">
+  <h2 class="section-title" id="wilayas-title" style="margin-bottom:1rem">ابحث حسب الولاية</h2>
+  <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+    {% for w in ['الجزائر','وهران','قسنطينة','سطيف','باتنة','عنابة','بجاية','تيزي وزو','المدية','بسكرة'] %}
+    <a href="/jobs?wilaya={{ w|urlencode }}" class="btn btn-outline btn-sm">📍 {{ w }}</a>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- CTA -->
+<section style="background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(16,185,129,.02));border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:4rem 1.5rem;text-align:center;margin-bottom:0" aria-labelledby="cta-title">
+  <h2 id="cta-title" style="font-size:1.75rem;font-weight:900;margin-bottom:.75rem">هل أنت صاحب عمل؟</h2>
+  <p style="color:var(--t2);margin-bottom:1.5rem;max-width:500px;margin-left:auto;margin-right:auto">انشر وظائفك مجاناً وصل لآلاف الكفاءات الجزائرية في دقائق</p>
+  <a href="/register" class="btn btn-green" style="padding:.85rem 2rem;font-size:1rem">انشر وظيفتك الآن — مجاناً 🚀</a>
+</section>
+{% endblock %}
