@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}اتصل بنا{% endblock %}
+{% block meta_desc %}تواصل مع فريق وضيفة DZ — نحن هنا للمساعدة في أي استفسار أو مشكلة.{% endblock %}
+{% block canonical %}/contact{% endblock %}
+
+{% block content %}
+<div class="container section" style="max-width:700px">
+  <nav aria-label="مسار التنقل" style="margin-bottom:1.5rem;font-size:.85rem;color:var(--t3)">
+    <a href="/" style="color:var(--t3)">الرئيسية</a> › <span style="color:var(--t1)">اتصل بنا</span>
+  </nav>
+
+  <h1 class="page-title">اتصل بنا</h1>
+  <p class="page-sub">نحن هنا للمساعدة — راسلنا وسنرد خلال 24 ساعة</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem">
+    <div class="card" style="text-align:center">
+      <div style="font-size:1.75rem;margin-bottom:.5rem">📧</div>
+      <div style="font-weight:600;margin-bottom:.25rem">البريد الإلكتروني</div>
+      <div style="color:var(--green);font-size:.9rem">contact@wadifa.dz</div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:1.75rem;margin-bottom:.5rem">⏰</div>
+      <div style="font-weight:600;margin-bottom:.25rem">أوقات الرد</div>
+      <div style="color:var(--t2);font-size:.9rem">الأحد — الخميس، 9ص — 5م</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 style="font-size:1.1rem;font-weight:700;margin-bottom:1.25rem">أرسل رسالة</h2>
+    <form method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="name">الاسم *</label>
+          <input type="text" id="name" name="name" required placeholder="أحمد بن علي" maxlength="100">
+        </div>
+        <div class="form-group">
+          <label for="email">البريد الإلكتروني *</label>
+          <input type="email" id="email" name="email" required placeholder="ahmed@example.dz">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="subject">الموضوع *</label>
+        <select id="subject" name="subject" required>
+          <option value="">اختر الموضوع...</option>
+          <option>مشكلة تقنية</option>
+          <option>سؤال عن الاشتراكات</option>
+          <option>الإبلاغ عن محتوى</option>
+          <option>اقتراح أو ملاحظة</option>
+          <option>شراكة أو إعلانات</option>
+          <option>أخرى</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="message">الرسالة *</label>
+        <textarea id="message" name="message" required placeholder="اكتب رسالتك هنا..." maxlength="2000" style="min-height:130px"></textarea>
+      </div>
+      <button type="submit" class="btn btn-green" style="padding:.75rem 2rem">📨 إرسال الرسالة</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

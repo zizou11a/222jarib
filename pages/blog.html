@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}المدونة — نصائح التوظيف{% endblock %}
+{% block meta_desc %}مدونة وضيفة DZ — نصائح للباحثين عن عمل وأصحاب العمل في الجزائر. كيف تكتب CV احترافي، كيف تنجح في المقابلة.{% endblock %}
+{% block canonical %}/blog{% endblock %}
+
+{% block content %}
+<div class="container section">
+  <nav aria-label="مسار التنقل" style="margin-bottom:1.5rem;font-size:.85rem;color:var(--t3)">
+    <a href="/" style="color:var(--t3)">الرئيسية</a> › <span style="color:var(--t1)">المدونة</span>
+  </nav>
+
+  <h1 class="page-title">المدونة 📝</h1>
+  <p class="page-sub">نصائح وإرشادات لتطوير مسيرتك المهنية</p>
+
+  {% if posts %}
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.25rem">
+    {% for post in posts %}
+    <article class="card card-hover">
+      <div style="color:var(--t3);font-size:.78rem;margin-bottom:.65rem">
+        <time datetime="{{ post.created_at.isoformat() }}">{{ post.created_at.strftime('%d/%m/%Y') }}</time>
+      </div>
+      <h2 style="font-size:1rem;font-weight:700;margin-bottom:.5rem">
+        <a href="/blog/{{ post.slug }}" style="color:var(--t1)">{{ post.title }}</a>
+      </h2>
+      {% if post.excerpt %}
+      <p style="color:var(--t2);font-size:.875rem;line-height:1.7">{{ post.excerpt }}</p>
+      {% endif %}
+      <div style="margin-top:1rem;padding-top:.85rem;border-top:1px solid var(--border)">
+        <a href="/blog/{{ post.slug }}" class="btn btn-outline btn-sm">اقرأ المزيد ←</a>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}
+  <!-- Static blog posts when DB is empty -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.25rem">
+    {% set static_posts = [
+      ('كيف تكتب CV احترافياً في 2024', 'نصائح عملية لكتابة سيرة ذاتية تجذب انتباه أصحاب العمل الجزائريين.', 'cv-احترافي-2024'),
+      ('10 أسئلة شائعة في مقابلات العمل', 'استعد لمقابلتك القادمة مع أكثر الأسئلة شيوعاً وكيف تجيب عليها.', 'اسئلة-مقابلة-عمل'),
+      ('أفضل الوظائف في الجزائر لعام 2024', 'تعرف على القطاعات الأكثر طلباً للكفاءات في سوق العمل الجزائري.', 'وظائف-الجزائر-2024'),
+      ('كيف تبحث عن عمل عبر الإنترنت', 'دليل شامل للبحث الفعال عن فرص العمل في الجزائر.', 'البحث-عن-عمل-اونلاين'),
+      ('نصائح لأصحاب العمل — كيف تجذب أفضل الكفاءات', 'إرشادات لكتابة إعلانات وظيفة فعالة تجذب المرشحين المناسبين.', 'جذب-الكفاءات'),
+      ('العمل عن بعد في الجزائر — الواقع والفرص', 'كل ما تحتاج معرفته عن سوق العمل عن بعد في الجزائر.', 'عمل-عن-بعد-الجزائر'),
+    ] %}
+    {% for title, excerpt, slug in static_posts %}
+    <article class="card card-hover">
+      <div style="color:var(--t3);font-size:.78rem;margin-bottom:.65rem">مقال مميز</div>
+      <h2 style="font-size:1rem;font-weight:700;margin-bottom:.5rem">{{ title }}</h2>
+      <p style="color:var(--t2);font-size:.875rem;line-height:1.7">{{ excerpt }}</p>
+      <div style="margin-top:1rem;padding-top:.85rem;border-top:1px solid var(--border)">
+        <span class="tag">قريباً</span>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Newsletter CTA -->
+  <div class="card" style="margin-top:2.5rem;text-align:center;background:rgba(16,185,129,.04);border-color:rgba(16,185,129,.2)">
+    <div style="font-size:1.5rem;margin-bottom:.5rem">📬</div>
+    <h2 style="font-size:1.1rem;font-weight:700;margin-bottom:.5rem">احصل على نصائح التوظيف</h2>
+    <p style="color:var(--t2);font-size:.9rem;margin-bottom:1.25rem">سجّل واحصل على أحدث نصائح التوظيف في بريدك</p>
+    <a href="/register" class="btn btn-green">انضم مجاناً ←</a>
+  </div>
+</div>
+{% endblock %}
